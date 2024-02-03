@@ -45,6 +45,10 @@ if (userId) {
   height: 100%;
   margin: 0 auto;
   font-size: 0.24rem;
+  background: url(./assets/images/bg.png) no-repeat,
+    linear-gradient(#8b72f7, #f5f6fb);
+  background-position: right 80px, 0 0;
+  background-size: 200px 352px, 100% 100%;
   overflow-y: auto;
 }
 </style>

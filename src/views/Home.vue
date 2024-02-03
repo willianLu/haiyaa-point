@@ -1,86 +1,95 @@
 <template>
-  <PageContainer class="main-page">
-    <div class="main-wrap">
-      <div class="haiyaa-point-count">20000</div>
-      <div class="haiyaa-point-tip">Haiyaa point</div>
-      <div class="task-wrap">
-        <ul class="task-tab flex-v-center">
-          <li
-            v-for="(item, index) in list"
-            :key="index"
-            :class="{ active: item.value === current }"
-            @click="handleSubChange(item)"
-          >
-            {{ item.text }}
-          </li>
-        </ul>
-        <div class="flex-center-space-between task-item">
+  <div class="main-wrap">
+    <div class="haiyaa-point-count">{{ total }}</div>
+    <div class="haiyaa-point-tip">Haiyaa point</div>
+    <div class="task-wrap">
+      <ul class="task-tab flex-v-center">
+        <li
+          v-for="(item, index) in list"
+          :key="index"
+          :class="{ active: item === current }"
+          @click="handleSubChange(item)"
+        >
+          {{ item }}
+        </li>
+      </ul>
+      <div class="task-content">
+        <div
+          v-for="(item, index) in taskMap[current]"
+          :key="current + '-' + index"
+          class="flex-center-space-between task-item"
+        >
           <div class="flex-v-center">
-            <div class="task-item-count flex-center">+500</div>
+            <div class="task-item-count flex-center">+{{ item.point }}</div>
             <div>
-              <p class="task-item-title">你的嘿嘿投资人</p>
-              <p class="task-item-tip">每新增1位投资人获得1分 2/100</p>
+              <p class="task-item-title">{{ item.taskName }}</p>
+              <p class="task-item-tip">
+                {{ item.curValue }} / {{ item.taskValue }}
+              </p>
             </div>
           </div>
-          <div class="task-item-btn flex-center">Go</div>
+          <div
+            v-if="item.curValue >= item.taskValue"
+            class="task-item-finished flex-center"
+          >
+            Finished
+          </div>
+          <!-- <div class="task-item-btn flex-center">Go</div> -->
         </div>
       </div>
     </div>
-  </PageContainer>
+  </div>
 </template>
 <script setup lang="ts">
-import { ref, computed, type Ref, onActivated } from 'vue'
-import { showDialog, showToast } from 'vant'
-import PageContainer from '@/components/page/container.vue'
-import useBaseStore from '@/store/index'
+import { ref, type Ref, onActivated } from 'vue'
+import { showToast } from 'vant'
 import Loading from '@/components/loading/index'
+import { queryTaskList } from '@/api/index'
+import useBaseStore from '@/store/index'
 
 defineOptions({
   name: 'HomePage'
 })
-
 const baseStore = useBaseStore()
-const list = ref([
-  {
-    text: 'Normal',
-    value: 1
-  },
-  {
-    text: 'Daily',
-    value: 2
-  }
-])
-const current = ref(1)
+const total = ref(0)
+const list = ref(['Daily', 'Weekly'])
+const taskMap: Ref<any> = ref({
+  Daily: [],
+  Weekly: []
+})
+const current = ref('Daily')
 
 onActivated(() => {
   ;(window as any).HeyheyBridge.setTopBar({
-    hideTitle: true
+    layout: 1
   })
 })
 
 async function handleInit() {
   Loading.show()
-  const res = await baseStore.getUserInfo()
+  const [res] = await queryTaskList({
+    userId: baseStore.userId
+  })
   if (!res || res.retCode) {
     showToast(res?.retTxt || 'Network Error')
+  } else {
+    taskMap.value.Daily = res.DayTask
+    taskMap.value.Weekly = res.WeekTask
+    total.value = res.DrawPoint || 0
   }
   Loading.hide()
 }
 handleInit()
 
 function handleSubChange(item: any) {
-  current.value = item.value
+  current.value = item
 }
 </script>
 <style lang="less" scoped>
-.main-page {
-  background: url(../assets/images/bg.png) no-repeat,
-    linear-gradient(#8b72f7, #f5f6fb);
-  background-position: right 80px, 0 0;
-  background-size: 200px 352px, 100% 100%;
-}
 .main-wrap {
-  padding: 88px 32px 80px;
+  padding: 140px 32px 80px;
+  height: 100%;
+  box-sizing: border-box;
 }
 .haiyaa-point-count {
   text-align: center;
@@ -97,7 +106,7 @@ function handleSubChange(item: any) {
 }
 .task-wrap {
   margin-top: 80px;
-  min-height: 1020px;
+  height: calc(100% - 220px);
   border-radius: 32px;
   background-color: #f9f5ff;
   overflow: hidden;
@@ -128,9 +137,13 @@ function handleSubChange(item: any) {
     }
   }
 }
+.task-content {
+  height: calc(100% - 124px);
+  overflow-y: auto;
+}
 .task-item {
   padding: 30px;
-  border-bottom: 1px solid #acacac33;
+  border-top: 1px solid #acacac33;
   overflow: hidden;
   &-btn {
     flex-shrink: 0;
@@ -143,11 +156,24 @@ function handleSubChange(item: any) {
     font-weight: bold;
     color: #8b72f7;
   }
+  &-finished {
+    flex-shrink: 0;
+    margin-left: 6px;
+    padding: 0 8px;
+    height: 48px;
+    border-radius: 16px;
+    border: 1px solid #8b72f7;
+    font-size: 24px;
+    color: #8b72f7;
+    opacity: 0.5;
+  }
   &-count {
     flex-shrink: 0;
+    word-break: break-all;
     margin-right: 12px;
-    width: 76px;
-    height: 76px;
+    padding: 6px;
+    width: 70px;
+    height: 70px;
     border: 4px solid #8b72f7;
     border-radius: 50%;
     font-size: 24px;

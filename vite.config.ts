@@ -17,6 +17,7 @@ export default defineConfig({
     proxy: {
       '/json': {
         target: 'http://testsg.haiyaapi.com/'
+        // target: 'https://sg.haiyaapi.com'
       }
     }
   },

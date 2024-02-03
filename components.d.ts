@@ -8,22 +8,13 @@ export {}
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     Container: typeof import('./src/components/page/container.vue')['default']
-    DetailItem: typeof import('./src/components/popup/detailItem.vue')['default']
     Nav: typeof import('./src/components/page/nav.vue')['default']
     Overlay: typeof import('./src/components/loading/overlay.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Skeleton: typeof import('./src/components/skeleton/index.vue')['default']
     SvgIcon: typeof import('./src/components/svg-icon.vue')['default']
-    Tip: typeof import('./src/components/popup/tip.vue')['default']
-    USDT: typeof import('./src/components/popup/USDT.vue')['default']
-    VanDatePicker: typeof import('vant/es')['DatePicker']
-    VanDialog: typeof import('vant/es')['Dialog']
-    VanField: typeof import('vant/es')['Field']
     VanOverlay: typeof import('vant/es')['Overlay']
-    VanPopup: typeof import('vant/es')['Popup']
-    Verification: typeof import('./src/components/popup/verification.vue')['default']
     Vertical: typeof import('./src/components/scroll-ad/vertical.vue')['default']
-    Withdrawal: typeof import('./src/components/popup/withdrawal.vue')['default']
   }
 }
