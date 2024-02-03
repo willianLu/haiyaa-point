@@ -24,7 +24,7 @@
             <div>
               <p class="task-item-title">{{ item.taskName }}</p>
               <p class="task-item-tip">
-                {{ item.curValue }} / {{ item.taskValue }}
+                {{ item.process }}
               </p>
             </div>
           </div>
@@ -73,8 +73,16 @@ async function handleInit() {
   if (!res || res.retCode) {
     showToast(res?.retTxt || 'Network Error')
   } else {
-    taskMap.value.Daily = res.DayTask
-    taskMap.value.Weekly = res.WeekTask
+    taskMap.value.Daily = res.DayTask.map((item: any) => {
+      item.process = `${
+        item.curValue >= item.taskValue ? item.taskValue : item.curValue
+      } / ${item.taskValue}`
+    })
+    taskMap.value.Weekly = res.WeekTask.map((item: any) => {
+      item.process = `${
+        item.curValue >= item.taskValue ? item.taskValue : item.curValue
+      } / ${item.taskValue}`
+    })
     total.value = res.DrawPoint || 0
   }
   Loading.hide()
