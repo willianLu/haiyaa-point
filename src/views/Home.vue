@@ -77,11 +77,13 @@ async function handleInit() {
       item.process = `${
         item.curValue >= item.taskValue ? item.taskValue : item.curValue
       } / ${item.taskValue}`
+      return item
     })
     taskMap.value.Weekly = res.WeekTask.map((item: any) => {
       item.process = `${
         item.curValue >= item.taskValue ? item.taskValue : item.curValue
       } / ${item.taskValue}`
+      return item
     })
     total.value = res.DrawPoint || 0
   }
